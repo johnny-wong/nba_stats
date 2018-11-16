@@ -25,6 +25,15 @@ class NBAStats():
         ''' Returns the dataframe containing info on the games '''
         return self.df_games
 
+    def get_boxscores(self):
+        return self.game_boxscores
+
+    def get_player_stats(self):
+        return self.player_stats
+
+    def get_player_name_id_dict(self):
+        return self.player_name_id
+
     def update_stats(self, date, season_type='Regular Season'):
         ''' 
         For all finished games on provided date, retrieve stats and update 
@@ -35,36 +44,107 @@ class NBAStats():
 
         elif season_type not in ['Regular Season', 'Playoffs', 'Pre Season']:
             raise ValueError('season_type must be: Regular Season, Playoffs, or Pre Season')
-        
-        # Get df containing info from all finished games
-        df_day_games = self._get_game_info(date, season_type)
 
-        self.df_games = self.df_games.append(df_day_games) #TODO figure out how to append without creating duplicates
+        # Constants    
+        # Determine which NBA season
+        if date.month >= 10:
+            season_start_year = date.year
+        else:
+            season_start_year = date.year - 1
+            
+        season = str(season_start_year) + '-' + str(season_start_year + 1)[-2:]
+        REQUEST_HEADERS = {
+            'user-agent': self.USER_AGENT,
+        }
+        # Get df containing info from all finished games
+        df_day_games = self._get_game_info(date, season, season_type, REQUEST_HEADERS)
+        self.df_games = self.df_games.append(df_day_games).drop_duplicates()
+
+        # Get boxscores
+        for idx, game in df_day_games.iterrows():
+            game_id = game['GAME_ID']
+            if game_id not in self.game_boxscores.keys():
+                # Assign home and away team
+                home_away = game['HOME_AWAY']
+                if home_away == 'HOME':
+                    home_team = game['TEAM_ABBREVIATION']
+                    home_team_id = game['TEAM_ID']
+                    away_team = game['OPP_TEAM_ABBREVIATION']
+                    away_team_id = game['OPP_TEAM_ID']
+                else:
+                    home_team = game['TEAM_ABBREVIATION']
+                    home_team_id = game['OPP_TEAM_ID']
+                    away_team = game['OPP_TEAM_ABBREVIATION']
+                    away_team_id = game['TEAM_ID']
+
+                boxscore = self._parse_boxscore(
+                    game_id,
+                    season, 
+                    season_type,
+                    REQUEST_HEADERS
+                    )
+
+                self.game_boxscores[game_id] = boxscore
+
+                # Update player stats
+                for idx, player in boxscore.iterrows():
+                    player_id = player['PLAYER_ID']
+
+                    # Only update if not already existing data on that date
+                    try:
+                        if date not in self.player_stats[player_id].index:
+                            update_player = True
+                        else:
+                            update_player = False
+                    except:
+                        update_player = True
+
+                    if update_player:
+                        player_name = player['PLAYER_NAME']
+
+                        # Update name to id dict
+                        if player_name not in self.player_name_id.keys():
+                            self.player_name_id[player_name] = player_id
+
+                        # Record whether it's home or away team
+                        if player['TEAM_ID'] == home_team_id:
+                            home_away = 'HOME'
+                            opp_team = away_team
+                            opp_team_id = away_team_id
+                        else:
+                            home_away = 'AWAY'
+                            opp_team = home_team
+                            opp_team_id = home_team_id
+
+                        # Convert to df to make it easier to add new columns later
+                        df_player_stats = player.to_frame().T
+                        
+                        # Add extra columns
+                        df_player_stats['Date'] = date
+                        df_player_stats['HOME_AWAY'] = home_away
+                        df_player_stats['OPP_TEAM_ABBREVIATION'] = opp_team
+                        df_player_stats['OPP_TEAM_ID'] = opp_team_id
+                        df_player_stats = df_player_stats.set_index('Date')
+                        try:
+                            self.player_stats[player_id] = self.player_stats[player_id].append(
+                                df_player_stats)
+                        except:
+                            # player didn't exist yet
+                            self.player_stats[player_id] = df_player_stats
+
         print('Updated stats for {}'.format(date))
 
-    def _get_game_info(self, date, season_type):
+    def _get_game_info(self, date, season, season_type, REQUEST_HEADERS):
         '''
         Given a date, return a df containing info on finished games of that day
         '''
         # Constants used in parsing
         NBA_ID = '00'
         NBA_URL = 'https://stats.nba.com/stats/teamgamelogs'
-        REQUEST_HEADERS = {
-            'user-agent': self.USER_AGENT,
-        }
         date_from = date
         date_to = date_from
-
         date_from_string = date_from.strftime('%m/%d/%Y')
         date_to_string = date_from_string
-
-        # Determine which NBA season
-        if date_from.month >= 10:
-            season_start_year = date_from.year
-        else:
-            season_start_year = date_from.year - 1
-            
-        season = str(season_start_year) + '-' + str(season_start_year + 1)[-2:]
 
         nba_params = {
             'LeagueID': NBA_ID,
@@ -109,6 +189,40 @@ class NBAStats():
 
         return df_games
 
+    def _parse_boxscore(self, GameID, season, season_type, REQUEST_HEADERS):
+        ''' 
+        Takes in the GameID in string format and returns a dataframe of the boxscore, broken down by player.
+        If game is not yet finished, will return a boxscore with NULL values
+        >>> df_boxscore = parse_boxscore('0021800151')
+        '''
+        if not isinstance(GameID, str):
+            raise TypeError('GameID must be string')
+        
+        URL_GAME_BOXSCORE = 'https://stats.nba.com/stats/boxscoretraditionalv2'
+        boxscore_params = {
+            'GameID': GameID,
+            'Season': season,
+            'SeasonType': season_type,
+            'EndPeriod': '10',
+            'EndRange': '28800',
+            'RangeType': '0',
+            'StartPeriod': '1',
+            'StartRange': '0'
+        }
+
+        r_boxscore = requests.get(URL_GAME_BOXSCORE, params=boxscore_params, 
+                                  headers=REQUEST_HEADERS, allow_redirects=False, timeout=15)
+
+        assert r_boxscore.status_code == 200
+
+        json_boxscore = r_boxscore.json()
+
+        player_stats = json_boxscore['resultSets'][0] # 0 is player stats, 1 is team stats, 2 is starter bench stats
+        boxscore_headers = player_stats['headers'] 
+        boxscore_stats = player_stats['rowSet']
+
+        df_boxscore = pd.DataFrame(columns=boxscore_headers, data=boxscore_stats)
+        return df_boxscore
+
 test = NBAStats()
 test.update_stats(dt.date(2018, 11, 14))
-print(test.get_games())
