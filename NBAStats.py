@@ -224,5 +224,6 @@ class NBAStats():
         df_boxscore = pd.DataFrame(columns=boxscore_headers, data=boxscore_stats)
         return df_boxscore
 
-test = NBAStats()
-test.update_stats(dt.date(2018, 11, 14))
+if __name__ == "__Main__":
+    test = NBAStats()
+    test.update_stats(dt.date(2018, 11, 14))
