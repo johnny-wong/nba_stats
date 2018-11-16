@@ -1,1 +1,3 @@
 .ipynb_checkpoints
+__pycache__
+nba_stats.pickle
