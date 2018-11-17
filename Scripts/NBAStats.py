@@ -7,6 +7,7 @@ import datetime as dt
 import requests
 import pandas as pd
 import numpy as np
+import time
 
 class NBAStats():
     def __init__(
@@ -64,10 +65,10 @@ class NBAStats():
             self.REQUEST_HEADERS)
         self.df_games = self.df_games.append(df_day_games).drop_duplicates()
 
-        # Get boxscores
+        # Update boxscores and all player stats
         for idx, game in df_day_games.iterrows():
             self._update_boxscore(date, game, season, season_type)
-                    
+            time.sleep(5)
         print('Updated stats for {}'.format(date))
 
     def _get_game_info(self, date, season, season_type, REQUEST_HEADERS):
@@ -171,20 +172,20 @@ class NBAStats():
         player's stats
         '''
         player_id = player['PLAYER_ID']
+        player_name = player['PLAYER_NAME']
+        print('Updating stats for {}'.format(player_name), end='.....')
 
         # Only update if not already existing data on that date
         try:
             if date in self.player_stats[player_id].index:
                 update_player = False
+                print('already updated')
             else:
                 update_player = True
         except:
             update_player = True
 
         if update_player:
-            player_name = player['PLAYER_NAME']
-            print('Updating stats for {}'.format(player_name), end='.....')
-
             # Update name to id dict
             if player_name not in self.player_name_id.keys():
                 self.player_name_id[player_name] = player_id
@@ -211,11 +212,11 @@ class NBAStats():
             try:
                 self.player_stats[player_id] = self.player_stats[player_id].append(
                     df_player_stats)
+                print('updated')
             except:
                 # player didn't exist yet
                 self.player_stats[player_id] = df_player_stats
-
-            print('Finished')
+                print('created')
 
     def _update_boxscore(self, date, game, season, season_type):
         ''' 
