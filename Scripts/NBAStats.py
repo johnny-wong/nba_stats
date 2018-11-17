@@ -30,7 +30,7 @@ class NBAStats():
         ''' Returns the dataframe containing info on the games '''
         return self.df_games
 
-    def get_boxscores(self):
+    def get_boxscores(self, game_id):
         return self.game_boxscores
 
     def get_player_stats(self):
@@ -50,7 +50,7 @@ class NBAStats():
         elif season_type not in ['Regular Season', 'Playoffs', 'Pre Season']:
             raise ValueError('season_type must be: Regular Season, Playoffs, or Pre Season')
 
-        print('Updating stats')
+        print('\nUpdating stats for {}'.format(date))
         # Constants    
         # Determine which NBA season
         if date.month >= 10:
@@ -68,8 +68,8 @@ class NBAStats():
         # Update boxscores and all player stats
         for idx, game in df_day_games.iterrows():
             self._update_boxscore(date, game, season, season_type)
-            time.sleep(5)
-        print('Updated stats for {}'.format(date))
+
+        print('Updated stats for {}\n'.format(date))
 
     def _get_game_info(self, date, season, season_type, REQUEST_HEADERS):
         '''
@@ -93,6 +93,7 @@ class NBAStats():
         }
 
         print('Accessing stats.nba.com for games on {}'.format(date), end='.....')
+        time.sleep(5)
         r = requests.get(NBA_URL, params=nba_params, headers=REQUEST_HEADERS, 
             allow_redirects=False, timeout=15)
         assert r.status_code == 200
@@ -126,9 +127,11 @@ class NBAStats():
         # Remove duplicate column of 'OPP_TEAM_ABBREVIATION'
         df_games = df_games.loc[:,~df_games.columns.duplicated()]
 
+        if len(df_games) == 0:
+            print('No games on {}'.format(date))
         return df_games
 
-    def _parse_boxscore(self, GameID, matchup, season, season_type, REQUEST_HEADERS):
+    def _parse_boxscore(self, date, GameID, matchup, season, season_type, REQUEST_HEADERS):
         ''' 
         Takes in the GameID in string format and returns a dataframe of the boxscore, broken down by player.
         If game is not yet finished, will return a boxscore with NULL values
@@ -149,7 +152,9 @@ class NBAStats():
             'StartRange': '0'
         }
 
-        print('\nAccessing game {} ({}) to get boxscore'.format(GameID, matchup), end='.....')
+        print('\nAccessing game {} ({} on {}) to get boxscore'.format(
+            GameID, date, matchup), end='.....')
+        time.sleep(5)
         r_boxscore = requests.get(URL_GAME_BOXSCORE, params=boxscore_params, 
                                   headers=REQUEST_HEADERS, allow_redirects=False, timeout=15)
 
@@ -173,7 +178,7 @@ class NBAStats():
         '''
         player_id = player['PLAYER_ID']
         player_name = player['PLAYER_NAME']
-        print('Updating stats for {}'.format(player_name), end='.....')
+        print('Updating stats for {}'.format(player_name), end='.' * (35 - len(player_name)))
 
         # Only update if not already existing data on that date
         try:
@@ -240,6 +245,7 @@ class NBAStats():
                 away_team_id = game['TEAM_ID']
 
             boxscore = self._parse_boxscore(
+                date,
                 game_id,
                 game['MATCHUP'],
                 season, 
@@ -254,7 +260,10 @@ class NBAStats():
                 # player_id = player['PLAYER_ID']
                 self._update_player(date, player, home_team, home_team_id,
                     away_team, away_team_id)
+        else:
+            print('Game {} ({} on {}) is already recorded, no need to update'.format(
+                game_id, game['MATCHUP'], date))
 
 if __name__ == "__main__":
     test = NBAStats()
-    test.update_stats(dt.date(2018, 11, 14))
+    test.update_stats(dt.date(2018, 9, 14))
