@@ -5,8 +5,8 @@ import datetime as dt
 import time
 
 ###################################
-START_DATE = dt.date(2017, 11, 3)
-END_DATE = dt.date(2017, 11, 3)
+START_DATE = dt.date(2016, 1, 1)
+END_DATE = dt.date(2017, 1, 1)
 ###################################
 
 
@@ -27,11 +27,23 @@ else:
     nba_stats = NBAStats.NBAStats()
 
 update_date = START_DATE
+count = 0
+AUTO_SAVE_RATE = 15 # Number of days before autosave
 while update_date <= END_DATE:
+    # Autosave
+    if count % AUTO_SAVE_RATE == 0 and count != 0:
+        print('Autosaving', end='.....')
+        pickle.dump(nba_stats, open(file_directory, 'wb'))
+        nba_stats = pickle.load(open(file_directory, 'rb'))
+        print('complete')
+
     # iterate through all dates
-    nba_stats.update_stats(update_date)
+    nba_stats.update_stats(update_date, season_type='Regular Season', 
+        seconds_wait=2)
     update_date += dt.timedelta(1)
-    
+    count += 1
+
+
 pickle.dump(nba_stats, open(file_directory, 'wb'))
 print('Updated stats from {} to {} and new file saved in {}'.format(
     START_DATE, END_DATE, file_directory))
