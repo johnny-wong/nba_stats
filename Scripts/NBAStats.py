@@ -39,7 +39,7 @@ class NBAStats():
     def get_player_name_id_dict(self):
         return self.player_name_id
 
-    def update_stats(self, date, season_type='Regular Season'):
+    def update_stats(self, date, season_type='Regular Season', seconds_wait=5):
         ''' 
         For all finished games on provided date, retrieve stats and update 
         game boxscores and player stats 
@@ -71,7 +71,8 @@ class NBAStats():
 
         print('Updated stats for {}\n'.format(date))
 
-    def _get_game_info(self, date, season, season_type, REQUEST_HEADERS):
+    def _get_game_info(self, date, season, season_type, 
+        REQUEST_HEADERS, seconds_wait=5):
         '''
         Given a date, return a df containing info on finished games of that day
         '''
@@ -93,7 +94,7 @@ class NBAStats():
         }
 
         print('Accessing stats.nba.com for games on {}'.format(date), end='.....')
-        time.sleep(5)
+        time.sleep(seconds_wait)
         r = requests.get(NBA_URL, params=nba_params, headers=REQUEST_HEADERS, 
             allow_redirects=False, timeout=15)
         assert r.status_code == 200
@@ -131,7 +132,8 @@ class NBAStats():
             print('No games on {}'.format(date))
         return df_games
 
-    def _parse_boxscore(self, date, GameID, matchup, season, season_type, REQUEST_HEADERS):
+    def _parse_boxscore(self, date, GameID, matchup, season, season_type, 
+        REQUEST_HEADERS, seconds_wait=5):
         ''' 
         Takes in the GameID in string format and returns a dataframe of the boxscore, broken down by player.
         If game is not yet finished, will return a boxscore with NULL values
@@ -154,7 +156,7 @@ class NBAStats():
 
         print('\nAccessing game {} ({} on {}) to get boxscore'.format(
             GameID, date, matchup), end='.....')
-        time.sleep(5)
+        time.sleep(seconds_wait)
         r_boxscore = requests.get(URL_GAME_BOXSCORE, params=boxscore_params, 
                                   headers=REQUEST_HEADERS, allow_redirects=False, timeout=15)
 
@@ -162,12 +164,15 @@ class NBAStats():
         print('Successful')
 
         json_boxscore = r_boxscore.json()
-
-        player_stats = json_boxscore['resultSets'][0] # 0 is player stats, 1 is team stats, 2 is starter bench stats
+        
+        # 0 is player stats, 1 is team stats, 2 is starter bench stats
+        player_stats = json_boxscore['resultSets'][0] 
+        
         boxscore_headers = player_stats['headers'] 
         boxscore_stats = player_stats['rowSet']
 
-        df_boxscore = pd.DataFrame(columns=boxscore_headers, data=boxscore_stats)
+        df_boxscore = pd.DataFrame(columns=boxscore_headers, 
+            data=boxscore_stats)
         return df_boxscore
 
     def _update_player(self, date, player, home_team, home_team_id, 
@@ -178,7 +183,8 @@ class NBAStats():
         '''
         player_id = player['PLAYER_ID']
         player_name = player['PLAYER_NAME']
-        print('Updating stats for {}'.format(player_name), end='.' * (35 - len(player_name)))
+        print('Updating stats for {}'.format(player_name), 
+            end='.' * (35 - len(player_name)))
 
         # Only update if not already existing data on that date
         try:
