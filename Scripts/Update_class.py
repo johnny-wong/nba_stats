@@ -5,16 +5,18 @@ import datetime as dt
 import time
 
 ###################################
-START_DATE = dt.date(2016, 1, 1)
-END_DATE = dt.date(2017, 1, 1)
+START_DATE = dt.date(2018, 11, 22)
+END_DATE = dt.date(2018 , 11, 22)
+
+AUTO_SAVE_RATE = 3 # Number of days before autosave
+SECONDS_WAIT = 0.1
 ###################################
 
 
 parent_dir = os.path.dirname(os.getcwd())
 file_directory = os.path.join(parent_dir, 'Data', 'nba_stats.pickle')
 
-
-print(os.path.dirname)
+# print(os.path.dirname)
 if START_DATE > END_DATE:
     raise ValueError('START_DATE {} must be before END_DATE {}'.format(
         START_DATE, END_DATE))
@@ -26,10 +28,11 @@ else:
     print('File not found, creating new nba_stats.pickle file')
     nba_stats = NBAStats.NBAStats()
 
-update_date = START_DATE
+update_date = END_DATE
 count = 0
-AUTO_SAVE_RATE = 15 # Number of days before autosave
-while update_date <= END_DATE:
+
+# Loop from END to START date so most recent games updated first.
+while update_date >= START_DATE:
     # Autosave
     if count % AUTO_SAVE_RATE == 0 and count != 0:
         print('Autosaving', end='.....')
@@ -39,8 +42,8 @@ while update_date <= END_DATE:
 
     # iterate through all dates
     nba_stats.update_stats(update_date, season_type='Regular Season', 
-        seconds_wait=2)
-    update_date += dt.timedelta(1)
+        seconds_wait=SECONDS_WAIT)
+    update_date -= dt.timedelta(1)
     count += 1
 
 

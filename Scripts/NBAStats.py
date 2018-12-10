@@ -155,7 +155,7 @@ class NBAStats():
         }
 
         print('\nAccessing game {} ({} on {}) to get boxscore'.format(
-            GameID, date, matchup), end='.....')
+            GameID, matchup, date), end='.....')
         time.sleep(seconds_wait)
         r_boxscore = requests.get(URL_GAME_BOXSCORE, params=boxscore_params, 
                                   headers=REQUEST_HEADERS, allow_redirects=False, timeout=15)
