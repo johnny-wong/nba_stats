@@ -9,10 +9,13 @@ Language: Python 3
 
 ## Progress
 - Finished working version of NBA scraper. But will likely have to change when I think of something extra I want during my analysis
+- Shown FGA is Poisson process
 
 ## Files
-NBAStats.py contains the class implementation of my web scraper. Stores all the scraped data.
+NBAStats.py contains the class implementation of my web scraper.
 
-update_stats.py is a script that actually takes an instance of the class and updates it.
+nba_stats.pickle stores all the scraped data.
+
+update_stats.py is a script that actually takes an instance of the class (the pickled file) and updates it.
 
 Jupyter notebooks used for exploratory analysis.
