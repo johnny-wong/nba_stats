@@ -31,15 +31,15 @@ class NBAStats():
         return self.df_games
 
     def get_boxscores(self, game_id):
-    	''' Returns the dictionary containing each game's boxscore '''
+        ''' Returns the dictionary containing each game's boxscore '''
         return self.game_boxscores
 
     def get_player_stats(self):
-    	''' Returns dictionary of player's stats '''
+        ''' Returns dictionary of player's stats '''
         return self.player_stats
 
     def get_player_name_id_dict(self):
-    	''' Dictionary mapping player's name to their id '''
+        ''' Dictionary mapping player's name to their id '''
         return self.player_name_id
 
     def update_stats(self, date, season_type='Regular Season', seconds_wait=5):
