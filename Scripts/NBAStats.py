@@ -138,7 +138,8 @@ class NBAStats():
     def _parse_boxscore(self, date, GameID, matchup, season, season_type, 
         REQUEST_HEADERS, seconds_wait=5):
         ''' 
-        Takes in the GameID in string format and returns a dataframe of the boxscore, broken down by player.
+        Takes in the GameID in string format and returns a dataframe of the 
+        boxscore, broken down by player.
         If game is not yet finished, will return a boxscore with NULL values
         >>> df_boxscore = parse_boxscore('0021800151')
         '''
@@ -176,6 +177,7 @@ class NBAStats():
 
         df_boxscore = pd.DataFrame(columns=boxscore_headers, 
             data=boxscore_stats)
+
         return df_boxscore
 
     def _update_player(self, date, player, home_team, home_team_id, 
@@ -223,6 +225,7 @@ class NBAStats():
             df_player_stats['OPP_TEAM_ABBREVIATION'] = opp_team
             df_player_stats['OPP_TEAM_ID'] = opp_team_id
             df_player_stats = df_player_stats.set_index('Date')
+
             try:
                 self.player_stats[player_id] = self.player_stats[player_id].append(
                     df_player_stats)
@@ -248,9 +251,9 @@ class NBAStats():
                 away_team = game['OPP_TEAM_ABBREVIATION']
                 away_team_id = game['OPP_TEAM_ID']
             else:
-                home_team = game['TEAM_ABBREVIATION']
+                home_team = game['OPP_TEAM_ABBREVIATION']
                 home_team_id = game['OPP_TEAM_ID']
-                away_team = game['OPP_TEAM_ABBREVIATION']
+                away_team = game['TEAM_ABBREVIATION']
                 away_team_id = game['TEAM_ID']
 
             boxscore = self._parse_boxscore(
@@ -261,7 +264,7 @@ class NBAStats():
                 season_type,
                 self.REQUEST_HEADERS
                 )
-            
+
             self.game_boxscores[game_id] = boxscore
 
             # Update player stats
