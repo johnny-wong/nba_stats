@@ -5,8 +5,8 @@ import datetime as dt
 import time
 
 ###################################
-START_DATE = dt.date(2018, 11, 22)
-END_DATE = dt.date(2018 , 11, 22)
+START_DATE = dt.date(2018, 12, 19)
+END_DATE = dt.date(2018 , 12, 21)
 
 AUTO_SAVE_RATE = 3 # Number of days before autosave
 SECONDS_WAIT = 0.1
