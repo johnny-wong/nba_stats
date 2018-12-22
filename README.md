@@ -10,6 +10,7 @@ Language: Python 3
 ## Progress
 - Finished working version of NBA scraper. But will likely have to change when I think of something extra I want during my analysis
 - Shown FGA is Poisson process
+- Created notebook to check past 100 games of any player with a focus on determining the probability they score under/over some given baseline. Also runs statistical significance test for whether the average points per game is different for wins and losses.
 
 ## Files
 NBAStats.py contains the class implementation of my web scraper.
