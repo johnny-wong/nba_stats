@@ -30,7 +30,7 @@ class NBAStats():
         ''' Returns the dataframe containing info on the games '''
         return self.df_games
 
-    def get_boxscores(self, game_id):
+    def get_boxscores(self):
         ''' Returns the dictionary containing each game's boxscore '''
         return self.game_boxscores
 
