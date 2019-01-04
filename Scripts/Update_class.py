@@ -5,11 +5,11 @@ import datetime as dt
 import time
 
 ###################################
-START_DATE = dt.date(2018, 12, 21)
-END_DATE = dt.date(2018 , 12, 23)
+START_DATE = dt.date(2018, 12, 28)
+END_DATE = dt.date(2019, 1, 1)
 
 AUTO_SAVE_RATE = 3 # Number of days before autosave
-SECONDS_WAIT = 0.1
+SECONDS_WAIT = 3 # Seconds to wait before sending request
 ###################################
 
 
@@ -22,8 +22,11 @@ if START_DATE > END_DATE:
         START_DATE, END_DATE))
 
 if os.path.isfile(file_directory):
-    print('Existing file found, updating')
+    print('Existing file found, creating backup and updating')
     nba_stats = pickle.load(open(file_directory, 'rb'))
+    backup_dir = os.path.dirname(file_directory) + '\\backup\\nba_stats_backup.pickle'
+    pickle.dump(nba_stats, open(backup_dir, 'wb'))
+
 else:
     print('File not found, creating new nba_stats.pickle file')
     nba_stats = NBAStats.NBAStats()
