@@ -5,8 +5,8 @@ import datetime as dt
 import time
 
 ###################################
-START_DATE = dt.date(2018, 12, 28)
-END_DATE = dt.date(2019, 1, 1)
+START_DATE = dt.date(2014, 1, 1)
+END_DATE = dt.date(2014,3,1)
 
 AUTO_SAVE_RATE = 3 # Number of days before autosave
 SECONDS_WAIT = 3 # Seconds to wait before sending request
@@ -40,6 +40,7 @@ while update_date >= START_DATE:
     if count % AUTO_SAVE_RATE == 0 and count != 0:
         print('Autosaving', end='.....')
         pickle.dump(nba_stats, open(file_directory, 'wb'))
+        pickle.dump(nba_stats, open(backup_dir, 'wb'))
         nba_stats = pickle.load(open(file_directory, 'rb'))
         print('complete')
 
