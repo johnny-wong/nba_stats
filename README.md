@@ -14,6 +14,8 @@ Language: Python 3
 - Streamlined above analysis into a tool that aids my betting. 
 - Analysis on whether Christmas day has any significant effect on player stats
 - Analysis on home court advantage w.r.t. player stats as well as team wins.
+- Built web scraper for SportsBet
+- Built tool to automatically compare scraped markets to theo
 
 ## Files
 NBAStats.py contains the class implementation of my web scraper.
@@ -23,3 +25,9 @@ nba_stats.pickle stores all the scraped data.
 update_stats.py is a script that actually takes an instance of the class (the pickled file) and updates it.
 
 Jupyter notebooks used for exploratory analysis.
+
+## To do
+- Finish scraper for ladbrokes
+- Create class to aggregate markets from different exchanges
+- Minutes per game analysis MPG ~ opposing team, home/away, time since last game, performance last game
+- Poisson model for FG3M
