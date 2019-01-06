@@ -5,9 +5,11 @@ import datetime as dt
 import time
 
 ###################################
-START_DATE = dt.date(2014, 1, 1)
-END_DATE = dt.date(2014,3,1)
+START_DATE = dt.date(2012, 10, 25)
+END_DATE = dt.date(2013,4,30    )
 
+# 2014-01-26 - 2014-01-31
+# 2014-03-03 - 2014-03-01
 AUTO_SAVE_RATE = 3 # Number of days before autosave
 SECONDS_WAIT = 3 # Seconds to wait before sending request
 ###################################
