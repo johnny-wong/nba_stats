@@ -48,7 +48,11 @@ class PlayerMarketSportsBet(PlayerMarket):
         # Converts all names to format I have in NBA_Stats
         player_name_dict = {
             'Al Farouq Aminu':'Al-Farouq Aminu',
-            'Willie Cauley Stein':'Willie Cauley-Stein'
+            'Willie Cauley Stein':'Willie Cauley-Stein',
+            'Wendell Carter':'Wendell Carter Jr.',
+            'D.J Augustin':'D.J. Augustin',
+            'Karl Anthony Towns':'Karl-Anthony Towns',
+            'T.J Warren':'T.J. Warren'
             }
 
         # Converts all stat headings to format I have in NBA_Stats
