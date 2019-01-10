@@ -65,6 +65,7 @@ class PlayerMarketSportsBet(PlayerMarket):
         re_name = r'(.+) - '
         name = re.match(re_name, odds_str).group(1)
         name = re.sub(r' Jr(\s|$)', ' Jr.', name) # Replace Jr with Jr.
+
         if name in player_name_dict.keys():
             player = player_name_dict[name]
         else:
@@ -91,4 +92,58 @@ class PlayerMarketSportsBet(PlayerMarket):
                              baseline_num, odds_over_num, 
                               odds_under_num)
         
+        return None
+
+class PlayerMarketLadbrokes(PlayerMarket):
+    def __init__(self, odds_str):
+        '''
+        Parses the string output scraped from sportsbet website and creates a PlayerMarket instance
+        String of format:
+        'Reggie Jackson Total Assists\nOver (4.5)\n1.87\nUnder (4.5)\n1.87'
+        '''
+        # Converts all names to format I have in NBA_Stats
+        player_name_dict = {
+            }
+        # Converts all stat headings to format I have in NBA_Stats
+        stat_dict = {
+            'Points':'PTS',
+            'Rebounds':'REB',
+            'Assists':'AST'
+            }
+        
+        # Name
+        re_name = r'^(.*) Total '
+        name = re.search(re_name, odds_str).group(1)
+        
+        name = re.sub(r' Jr(\s|$)', ' Jr.', name) # Replace Jr with Jr.
+        if name in player_name_dict.keys():
+            # Replace ladbrokes' name with nba_stats
+            player = player_name_dict[name]
+        else:
+            player = name
+
+        # Stat
+        re_stat = r' Total (.+)\n'
+        stat = re.search(re_stat, odds_str).group(1)
+        stat_NBA = stat_dict[stat]
+
+        # Baseline
+        re_baseline = r'Over \((\d+\.5)\)'
+        baseline = re.search(re_baseline, odds_str).group(1)
+        baseline_num = float(baseline)
+
+        # Odds over
+        re_odds_over = r'\n(\d+\.\d+)\n'
+        odds_over = re.search(re_odds_over, odds_str).group(1)
+        odds_over_num = float(odds_over)
+        
+        # Odds under
+        re_odds_under = r'\n(\d+\.\d+)$'
+        odds_under = re.search(re_odds_under, odds_str).group(1)
+        odds_under_num = float(odds_under)
+        
+        PlayerMarket.__init__(self, 'sportsbet', 
+                             player, stat_NBA,
+                             baseline_num, odds_over_num, 
+                              odds_under_num)
         return None
