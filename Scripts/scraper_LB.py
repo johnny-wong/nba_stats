@@ -2,10 +2,11 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
 import datetime as dt
+import re
 
 def get_links_LB(date=dt.date.today().strftime("%d/%m/%Y"),
-                 chrome_path=r"C:\Users\johnn\chromedriver\chromedriver.exe",
-                 url = "https://www.ladbrokes.com.au/sports/basketball/69460051-basketball-usa-nba/"):
+                chrome_path=r"C:\Users\johnn\chromedriver\chromedriver.exe",
+                url = "https://www.ladbrokes.com.au/sports/basketball/69460051-basketball-usa-nba/"):
     '''
     Goes through ladbroke's NBA games page and returns a list of links to all open markets.
     '''

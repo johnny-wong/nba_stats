@@ -3,7 +3,7 @@ from selenium.webdriver.common.keys import Keys
 import time
 import datetime as dt
 
-def get_links_SB(date=dt.date.today().strftime("%d/%m/%y"),
+def get_links_SB(date=dt.date.today().strftime("%d/%m/%y"), 
                 chrome_path=r"C:\Users\johnn\chromedriver\chromedriver.exe",
                 url="https://www.sportsbet.com.au/betting/basketball-us/nba-matches"):
     ''' 
