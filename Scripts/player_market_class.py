@@ -1,16 +1,22 @@
 import re
 
 class PlayerMarket():
-    def __init__(self, exchange, player, stat, baseline, odds_over, odds_under):
-        self.exchange = exchange
+    def __init__(self, overs_exchange, unders_exchange, 
+        player, stat, baseline, odds_over, odds_under):
+
+        self.overs_exchange = overs_exchange
+        self.unders_exchange = unders_exchange
         self.player = player
         self.stat = stat
         self.baseline = baseline
         self.odds_over = odds_over
         self.odds_under = odds_under
     
-    def get_exchange(self):
-        return self.exchange
+    def get_overs_exchange(self):
+        return self.overs_exchange
+
+    def get_unders_exchange(self):
+        return self.unders_exchange
     
     def get_player(self):
         return self.player
@@ -87,7 +93,7 @@ class PlayerMarketSportsBet(PlayerMarket):
         odds_under = re.search(re_odds_under, odds_str).group(1)
         odds_under_num = float(odds_under)
         
-        PlayerMarket.__init__(self, 'sportsbet', 
+        PlayerMarket.__init__(self, 'sportsbet', 'sportsbet',
                              player, stat_NBA,
                              baseline_num, odds_over_num, 
                               odds_under_num)
@@ -142,7 +148,7 @@ class PlayerMarketLadbrokes(PlayerMarket):
         odds_under = re.search(re_odds_under, odds_str).group(1)
         odds_under_num = float(odds_under)
         
-        PlayerMarket.__init__(self, 'sportsbet', 
+        PlayerMarket.__init__(self, 'ladbrokes', 'ladbrokes', 
                              player, stat_NBA,
                              baseline_num, odds_over_num, 
                               odds_under_num)
