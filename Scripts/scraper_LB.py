@@ -56,7 +56,8 @@ def get_player_markets_LB(link,
         'Total Assists'
     ]
 
-    main_markets = [market for market in markets if re.search(r'Total (Points|Rebounds|Assists)$', market.text)]
+    main_markets = [market for market in markets if re.search(
+        r'Total (Points|Rebounds|Assists)$', market.text)]
 
     # Scroll to top so that the first box isn't hidden by ladbrokes's ribbon
     driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.HOME)
@@ -79,3 +80,4 @@ def get_player_markets_LB(link,
 
     driver.close()
     return market_list
+
