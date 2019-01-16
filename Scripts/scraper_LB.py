@@ -69,7 +69,7 @@ def get_player_markets_LB(link,
     prev_market_text = ''# There seems to be triples of every market for some reason
     for market in main_markets:
         market.click()
-        time.sleep(1)
+        time.sleep(0.5)
         market_text = market.text
 
         if market_text == prev_market_text:
