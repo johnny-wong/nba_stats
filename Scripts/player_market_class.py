@@ -139,12 +139,12 @@ class PlayerMarketLadbrokes(PlayerMarket):
         baseline_num = float(baseline)
 
         # Odds over
-        re_odds_over = r'\n(\d+\.\d+)\n'
+        re_odds_over = r'\n(\d+.*)\n'
         odds_over = re.search(re_odds_over, odds_str).group(1)
         odds_over_num = float(odds_over)
         
         # Odds under
-        re_odds_under = r'\n(\d+\.\d+)$'
+        re_odds_under = r'\n(\d+.*)$'
         odds_under = re.search(re_odds_under, odds_str).group(1)
         odds_under_num = float(odds_under)
         
