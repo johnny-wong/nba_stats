@@ -33,11 +33,60 @@ class PlayerMarket():
     def get_odds_under(self):
         return self.odds_under
 
+    def get_market_name(self):
+        '''
+        Returns an identifier for the market, doesn't include odds e.g.
+        Joe Ingles - 5.5 AST
+        '''
+        return '{} - {} {}'.format(self.get_player(),
+            self.get_baseline(), self.get_stat())
+
+    def combine_odds(self, player_market):
+        '''
+        Takes in another PlayerMarket and returns a PlayerMarket with the
+        best combined odds of both.
+        '''
+        if not isinstance(player_market, PlayerMarket):
+            raise TypeError(('player_market must be of class PlayerMarket. '
+                'It is currently a {}').format(type(player_market)))
+
+        elif self.get_market_name() != player_market.get_market_name():
+            raise ValueError(('Not the same markets\n'
+                'This market: {}\nplayer_market: {}').format(
+                self.get_market_name(), player_market.get_market_name()))
+
+        exchange1_overs = self.get_odds_over()
+        exchange2_overs = player_market.get_odds_over()
+
+        if exchange2_overs > exchange1_overs:
+            best_odds_overs = exchange2_overs
+            exchange_overs = player_market.get_overs_exchange()
+        else:
+            best_odds_overs = exchange1_overs
+            exchange_overs = self.get_overs_exchange()
+
+        exchange1_unders = self.get_odds_under()
+        exchange2_unders = player_market.get_odds_under()
+
+        if exchange2_unders > exchange1_unders:
+            best_odds_unders = exchange2_unders
+            exchange_unders = player_market.get_unders_exchange()
+        else:
+            best_odds_unders = exchange1_unders
+            exchange_unders = self.get_unders_exchange()
+
+        market_best_odds = PlayerMarket(exchange_overs, exchange_unders,
+            self.get_player(), self.get_stat(), self.get_baseline(),
+            best_odds_overs, best_odds_unders)
+
+        return market_best_odds 
+
     def __repr__(self):
-        string_repr = '{} - {}\nOver {:^5}Under {:^4}\n{:^10}{:^10}'.format(
-            self.get_player(), self.get_stat(),
-            self.get_baseline(), self.get_baseline(),
-            self.get_odds_over(), self.get_odds_under())
+        string_repr = '{}\nOvers {:5} {}\nUnders {:5} {}'.format(
+            self.get_market_name(),
+            self.get_odds_over(), self.get_overs_exchange(),
+            self.get_odds_under(), self.get_unders_exchange()
+            )
         return string_repr
 
     def __string__(self):
@@ -109,6 +158,9 @@ class PlayerMarketLadbrokes(PlayerMarket):
         '''
         # Converts all names to format I have in NBA_Stats
         player_name_dict = {
+            'P.J. Tucker':'PJ Tucker',
+            'J.J. Redick':'JJ Redick',
+            'Marvin Bagley': 'Marvin Bagley III'
             }
         # Converts all stat headings to format I have in NBA_Stats
         stat_dict = {
