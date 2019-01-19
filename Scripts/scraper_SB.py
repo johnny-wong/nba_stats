@@ -3,13 +3,10 @@ from selenium.webdriver.common.keys import Keys
 import time
 import datetime as dt
 
-def get_links_SB(date=dt.date.today().strftime("%d/%m/%y"), 
-                chrome_path=r"C:\Users\johnn\chromedriver\chromedriver.exe",
-                url="https://www.sportsbet.com.au/betting/basketball-us/nba-matches"):
+def get_links(date, chrome_path, url):
     ''' 
     date in dd/mm/yy format
     Goes through sportsbet's NBA games page and returns a list of links to all open markets.
-    Open meaning of the day specified and not in play
     '''
 
     driver = webdriver.Chrome(chrome_path)
@@ -24,10 +21,10 @@ def get_links_SB(date=dt.date.today().strftime("%d/%m/%y"),
     driver.close()
     return links
 
-def get_player_markets_SB(link,
-                         chrome_path=r"C:\Users\johnn\chromedriver\chromedriver.exe"):
+def get_player_markets(link,
+                        chrome_path=r"C:\Users\johnn\chromedriver\chromedriver.exe"):
     '''
-    Returns a list of strings parsed from sportsbets player markets.
+    Returns a list of strings parsed from sportsbets player markets from input link
     '''
     options = webdriver.ChromeOptions()
     options.add_argument("--start-maximized")
@@ -37,7 +34,7 @@ def get_player_markets_SB(link,
 
     markets = driver.find_elements_by_class_name("touchArea_fgteabt")
 
-    markets_of_interest = ['Top Markets', # To minimise
+    markets_of_interest = ['Top Markets', # To minimise as default is opened
                            'Player Points Markets', 
                            'Player Rebounds Markets', 
                            'Player Assists Markets']
@@ -70,3 +67,18 @@ def get_player_markets_SB(link,
     driver.close()
     
     return market_list
+
+def get_all_odds_str(date=dt.date.today().strftime("%d/%m/%y"),
+                chrome_path=r"C:\Users\johnn\chromedriver\chromedriver.exe",
+                url="https://www.sportsbet.com.au/betting/basketball-us/nba-matches"):
+    '''
+    For supplied date, return a list containing all strings of player markets
+    parsed from Ladbrokes
+    '''
+
+    links = get_links(date, chrome_path, url)
+    odds_str = []
+    for link in links:
+        odds_str.extend(get_player_markets(link, chrome_path))
+
+    return odds_str
