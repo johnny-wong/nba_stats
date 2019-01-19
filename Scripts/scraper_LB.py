@@ -81,8 +81,10 @@ def get_all_odds_str(date=dt.date.today().strftime("%d/%m/%Y"),
     '''
 
     links = get_links(date, chrome_path, url)
+    print('Got game links from LB\n')
     odds_str = []
-    for link in links:
+    for i, link in enumerate(links):
         odds_str.extend(get_player_markets(link, chrome_path))
-
+        print('Got odds strings from {} ({}/{})'.format(link,
+            i+1, len(links)))
     return odds_str

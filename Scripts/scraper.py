@@ -19,7 +19,9 @@ def get_best_player_markets(market_date=dt.date.today()):
 
     # Get all odds strings from exchanges
     odds_str_LB = scraper_LB.get_all_odds_str(market_date_LB)
+    print('Got all odds strings from LB\n')
     odds_str_SB = scraper_SB.get_all_odds_str(market_date_SB)
+    print('Got all odds strings from SB\n')
 
     # Convert odds strings to PlayerMarkets
     player_markets_LB = []
@@ -39,6 +41,7 @@ def get_best_player_markets(market_date=dt.date.today()):
             continue
 
     best_markets = find_best_markets(player_markets_LB, player_markets_SB)
+    print('Combined odds from all available exchanges to get best odds')
     return best_markets
 
 def find_best_markets(*args):
