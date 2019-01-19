@@ -5,8 +5,8 @@ import datetime as dt
 import time
 
 ###################################
-START_DATE = dt.date(2012, 10, 25)
-END_DATE = dt.date(2013,4,30    )
+START_DATE = dt.date(2019, 1, 17)
+END_DATE = dt.date(2019, 1, 17)
 
 # 2014-01-26 - 2014-01-31
 # 2014-03-03 - 2014-03-01
