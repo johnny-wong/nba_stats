@@ -66,7 +66,7 @@ def find_best_markets(*args):
     for player_market in master_list:
         market_name = player_market.get_market_name()
         if market_name in dict_master:
-            dict_master[market_name] = dict_master[market_name].combine_odds(player_maket)
+            dict_master[market_name] = dict_master[market_name].combine_odds(player_market)
         else:
             dict_master[market_name] = player_market
 
