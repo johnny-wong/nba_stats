@@ -11,35 +11,20 @@ class PlayerMarket():
         self.baseline = baseline
         self.odds_over = odds_over
         self.odds_under = odds_under
-    
-    def get_overs_exchange(self):
-        return self.overs_exchange
-
-    def get_unders_exchange(self):
-        return self.unders_exchange
-    
-    def get_player(self):
-        return self.player
-    
-    def get_stat(self):
-        return self.stat
-    
-    def get_baseline(self):
-        return self.baseline
-    
-    def get_odds_over(self):
-        return self.odds_over
-    
-    def get_odds_under(self):
-        return self.odds_under
 
     def get_market_name(self):
         '''
         Returns an identifier for the market, doesn't include odds e.g.
         Joe Ingles - 5.5 AST
         '''
-        return '{} - {} {}'.format(self.get_player(),
-            self.get_baseline(), self.get_stat())
+        return '{} - {} {}'.format(self.player, self.baseline, self.stat)
+
+    def calc_spread(self):
+        '''
+        Returns the excess probability over 100% implied by the market's odds.
+        Negative means there is an arb opportunity
+        '''
+        return 1/float(self.odds_over) + 1/float(self.odds_under) - 1
 
     def combine_odds(self, player_market):
         '''
@@ -55,28 +40,28 @@ class PlayerMarket():
                 'This market: {}\nplayer_market: {}').format(
                 self.get_market_name(), player_market.get_market_name()))
 
-        exchange1_overs = self.get_odds_over()
-        exchange2_overs = player_market.get_odds_over()
+        exchange1_overs = self.odds_over
+        exchange2_overs = player_market.odds_over
 
         if exchange2_overs > exchange1_overs:
             best_odds_overs = exchange2_overs
-            exchange_overs = player_market.get_overs_exchange()
+            exchange_overs = player_market.overs_exchange
         else:
             best_odds_overs = exchange1_overs
-            exchange_overs = self.get_overs_exchange()
+            exchange_overs = self.overs_exchange
 
-        exchange1_unders = self.get_odds_under()
-        exchange2_unders = player_market.get_odds_under()
+        exchange1_unders = self.odds_under
+        exchange2_unders = player_market.odds_under
 
         if exchange2_unders > exchange1_unders:
             best_odds_unders = exchange2_unders
-            exchange_unders = player_market.get_unders_exchange()
+            exchange_unders = player_market.unders_exchange
         else:
             best_odds_unders = exchange1_unders
-            exchange_unders = self.get_unders_exchange()
+            exchange_unders = self.unders_exchange
 
         market_best_odds = PlayerMarket(exchange_overs, exchange_unders,
-            self.get_player(), self.get_stat(), self.get_baseline(),
+            self.player, self.stat, self.baseline, 
             best_odds_overs, best_odds_unders)
 
         return market_best_odds 
@@ -84,8 +69,8 @@ class PlayerMarket():
     def __repr__(self):
         string_repr = '{}\nOvers {:5} {}\nUnders {:5} {}'.format(
             self.get_market_name(),
-            self.get_odds_over(), self.get_overs_exchange(),
-            self.get_odds_under(), self.get_unders_exchange()
+            self.odds_over, self.overs_exchange,
+            self.odds_under, self.unders_exchange
             )
         return string_repr
 
