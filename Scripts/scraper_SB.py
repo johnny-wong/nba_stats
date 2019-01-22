@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
 import datetime as dt
+import re
 
 def get_links(date, chrome_path, url):
     ''' 
@@ -68,19 +69,34 @@ def get_player_markets(link,
     
     return market_list
 
-def get_all_odds_str(date=dt.date.today().strftime("%d/%m/%y"),
+def get_game_tuples(date=dt.date.today().strftime("%d/%m/%y"),
                 chrome_path=r"C:\Users\johnn\chromedriver\chromedriver.exe",
                 url="https://www.sportsbet.com.au/betting/basketball-us/nba-matches"):
     '''
-    For supplied date, return a list containing all strings of player markets
-    parsed from Ladbrokes
+    For supplied date, return a list of tuples each containing:
+    - datetime when it was recorded
+    - home team
+    - away team
+    - list of odds strings
     '''
 
     links = get_links(date, chrome_path, url)
     print('Got game links from SB\n')
-    odds_str = []
+    game_tuples = []
     for i, link in enumerate(links):
-        odds_str.extend(get_player_markets(link, chrome_path))
+        # Find teams and record time
+        teams = re.search(r'nba-matches/(.*)-at-(.*)-\d+$', link)
+        home_team = teams.group(2)
+        away_team = teams.group(1)
+
+        odds_str_list = get_player_markets(link, chrome_path)
+        
+        game_tuple = (dt.datetime.now(), home_team, 
+            away_team, odds_str_list)
+
+        game_tuples.append(game_tuple)
+        
         print('Got odds strings from {} ({}/{})'.format(link,
             i+1, len(links)))
-    return odds_str
+
+    return game_tuples

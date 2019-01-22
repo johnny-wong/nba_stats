@@ -1,9 +1,13 @@
 import re
 
 class PlayerMarket():
-    def __init__(self, overs_exchange, unders_exchange, 
+    def __init__(self, time_rec, home_team, away_team,
+        overs_exchange, unders_exchange, 
         player, stat, baseline, odds_over, odds_under):
 
+        self.time_rec = time_rec
+        self.home_team = home_team
+        self.away_team = away_team
         self.overs_exchange = overs_exchange
         self.unders_exchange = unders_exchange
         self.player = player
@@ -60,14 +64,20 @@ class PlayerMarket():
             best_odds_unders = exchange1_unders
             exchange_unders = self.unders_exchange
 
-        market_best_odds = PlayerMarket(exchange_overs, exchange_unders,
+        time_rec = min(self.time_rec, player_market.time_rec)
+
+        market_best_odds = PlayerMarket(time_rec, 
+            self.home_team, self.away_team, 
+            exchange_overs, exchange_unders,
             self.player, self.stat, self.baseline, 
             best_odds_overs, best_odds_unders)
 
         return market_best_odds 
 
     def __repr__(self):
-        string_repr = '{}\nOvers {:5} {}\nUnders {:5} {}'.format(
+        string_repr = ('{} @ {} - {:%d-%b %H:%M}\n'
+            '{}\nOvers {:5} {}\nUnders {:5} {}').format(
+            self.away_team, self.home_team, self.time_rec,
             self.get_market_name(),
             self.odds_over, self.overs_exchange,
             self.odds_under, self.unders_exchange
@@ -78,7 +88,7 @@ class PlayerMarket():
         return self.__repr__()
 
 class PlayerMarketSportsBet(PlayerMarket):
-    def __init__(self, odds_str):
+    def __init__(self, time_rec, home_team, away_team, odds_str):
         '''
         Parses the string output scraped from sportsbet website and creates a PlayerMarket instance
         String of format:
@@ -127,15 +137,16 @@ class PlayerMarketSportsBet(PlayerMarket):
         odds_under = re.search(re_odds_under, odds_str).group(1)
         odds_under_num = float(odds_under)
         
-        PlayerMarket.__init__(self, 'sportsbet', 'sportsbet',
-                             player, stat_NBA,
-                             baseline_num, odds_over_num, 
-                              odds_under_num)
+        PlayerMarket.__init__(self, time_rec, home_team, away_team,
+                            'sportsbet', 'sportsbet',
+                            player, stat_NBA,
+                            baseline_num, odds_over_num, 
+                            odds_under_num)
         
         return None
 
 class PlayerMarketLadbrokes(PlayerMarket):
-    def __init__(self, odds_str):
+    def __init__(self, time_rec, home_team, away_team, odds_str):
         '''
         Parses the string output scraped from sportsbet website and creates a PlayerMarket instance
         String of format:
@@ -185,8 +196,9 @@ class PlayerMarketLadbrokes(PlayerMarket):
         odds_under = re.search(re_odds_under, odds_str).group(1)
         odds_under_num = float(odds_under)
         
-        PlayerMarket.__init__(self, 'ladbrokes', 'ladbrokes', 
-                             player, stat_NBA,
-                             baseline_num, odds_over_num, 
-                              odds_under_num)
+        PlayerMarket.__init__(self, time_rec, home_team, away_team,
+                            'ladbrokes', 'ladbrokes', 
+                            player, stat_NBA,
+                            baseline_num, odds_over_num, 
+                            odds_under_num)
         return None

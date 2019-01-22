@@ -26,7 +26,12 @@ def get_links(date, chrome_path, url):
 
         try:
             link = game.find_element_by_tag_name("a")
-            links.append(link.get_attribute('href'))
+            link_str = link.get_attribute('href')
+            
+            if re.search(r'nba/\d+-(.*)-v-(.*)/$', link_str):
+                # Sometimes the game is shown but there is no valid link to the bets
+                links.append(link_str)
+
         except:
             None
     driver.close()
@@ -72,19 +77,34 @@ def get_player_markets(link, chrome_path):
     driver.close()
     return market_list
 
-def get_all_odds_str(date=dt.date.today().strftime("%d/%m/%Y"),
+def get_game_tuples(date=dt.date.today().strftime("%d/%m/%Y"),
                 chrome_path=r"C:\Users\johnn\chromedriver\chromedriver.exe",
                 url = "https://www.ladbrokes.com.au/sports/basketball/69460051-basketball-usa-nba/"):
     '''
-    For supplied date, return a list containing all strings of player markets
-    parsed from Ladbrokes
+    For supplied date, return a list of tuples each containing:
+    - datetime when it was recorded
+    - home team
+    - away team
+    - list of odds strings
     '''
 
     links = get_links(date, chrome_path, url)
     print('Got game links from LB\n')
-    odds_str = []
+    game_tuples = []
     for i, link in enumerate(links):
-        odds_str.extend(get_player_markets(link, chrome_path))
+        # Find teams and record time
+        teams = re.search(r'nba/\d+-(.*)-v-(.*)/$', link)
+        home_team = teams.group(1)
+        away_team = teams.group(2)
+
+        odds_str_list = get_player_markets(link, chrome_path)
+        
+        game_tuple = (dt.datetime.now(), home_team, 
+            away_team, odds_str_list)
+
+        game_tuples.append(game_tuple)
+        
         print('Got odds strings from {} ({}/{})'.format(link,
             i+1, len(links)))
-    return odds_str
+
+    return game_tuples

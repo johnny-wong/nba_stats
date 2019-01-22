@@ -12,33 +12,45 @@ def get_best_player_markets(market_date=dt.date.today()):
     - Sportsbet
     Returns a list of PlayerMarket with the best odds from any exchange
     '''
-
     # Convert dates to format required by scraper
     market_date_LB = market_date.strftime("%d/%m/%Y")
     market_date_SB = market_date.strftime("%d/%m/%y")
 
     # Get all odds strings from exchanges
-    odds_str_LB = scraper_LB.get_all_odds_str(market_date_LB)
+    game_tuples_LB = scraper_LB.get_game_tuples(market_date_LB)
     print('Got all odds strings from LB\n')
-    odds_str_SB = scraper_SB.get_all_odds_str(market_date_SB)
+    game_tuples_SB = scraper_SB.get_game_tuples(market_date_SB)
     print('Got all odds strings from SB\n')
 
     # Convert odds strings to PlayerMarkets
     player_markets_LB = []
-    for odds_str in odds_str_LB:
+    for game_tuple in game_tuples_LB:
         try:
-            player_markets_LB.append(
-                player_market_class.PlayerMarketLadbrokes(odds_str))
+            date, home_team, away_team, odds_str_list = game_tuple
+            for odds_str in odds_str_list:
+                player_markets_LB.append(
+                    player_market_class.PlayerMarketLadbrokes(date,
+                        home_team, away_team, odds_str))
         except:
             continue
 
+    # player_markets_SB = []
+    # for game_tuple in game_tuples_SB:
+    #     try:
+    #         date, home_team, away_team, odds_str = game_tuple
+    #         player_markets_SB.append(
+    #             player_market_class.PlayerMarketSportsBet(date,
+    #                 home_team, away_team, odds_str))
+    #     except:
+    #         continue
+
     player_markets_SB = []
-    for odds_str in odds_str_SB:
-        try:
+    for game_tuple in game_tuples_SB:
+        date, home_team, away_team, odds_str_list = game_tuple
+        for odds_str in odds_str_list:
             player_markets_SB.append(
-                player_market_class.PlayerMarketSportsBet(odds_str))
-        except:
-            continue
+                player_market_class.PlayerMarketSportsBet(date,
+                    home_team, away_team, odds_str))
 
     best_markets = find_best_markets(player_markets_LB, player_markets_SB)
     print('Combined odds from all available exchanges to get best odds')
@@ -71,3 +83,4 @@ def find_best_markets(*args):
             dict_master[market_name] = player_market
 
     return list(dict_master.values())
+
