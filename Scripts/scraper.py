@@ -25,32 +25,25 @@ def get_best_player_markets(market_date=dt.date.today()):
     # Convert odds strings to PlayerMarkets
     player_markets_LB = []
     for game_tuple in game_tuples_LB:
-        try:
-            date, home_team, away_team, odds_str_list = game_tuple
-            for odds_str in odds_str_list:
+        date, home_team, away_team, odds_str_list = game_tuple
+        for odds_str in odds_str_list:
+            try:
                 player_markets_LB.append(
                     player_market_class.PlayerMarketLadbrokes(date,
                         home_team, away_team, odds_str))
-        except:
-            continue
-
-    # player_markets_SB = []
-    # for game_tuple in game_tuples_SB:
-    #     try:
-    #         date, home_team, away_team, odds_str = game_tuple
-    #         player_markets_SB.append(
-    #             player_market_class.PlayerMarketSportsBet(date,
-    #                 home_team, away_team, odds_str))
-    #     except:
-    #         continue
+            except:
+                continue
 
     player_markets_SB = []
     for game_tuple in game_tuples_SB:
         date, home_team, away_team, odds_str_list = game_tuple
         for odds_str in odds_str_list:
-            player_markets_SB.append(
-                player_market_class.PlayerMarketSportsBet(date,
-                    home_team, away_team, odds_str))
+            try:
+                playerer_markets_SB.append(
+                    player_market_class.PlayerMarketSportsBet(date,
+                        home_team, away_team, odds_str))
+            except:
+                continue
 
     best_markets = find_best_markets(player_markets_LB, player_markets_SB)
     print('Combined odds from all available exchanges to get best odds')
