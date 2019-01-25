@@ -156,7 +156,9 @@ class PlayerMarketLadbrokes(PlayerMarket):
         player_name_dict = {
             'P.J. Tucker':'PJ Tucker',
             'J.J. Redick':'JJ Redick',
-            'Marvin Bagley': 'Marvin Bagley III'
+            'Marvin Bagley': 'Marvin Bagley III',
+            'Otto Porter': 'Otto Porter Jr.',
+            'C.J. McCollum': 'CJ McCollum'
             }
         # Converts all stat headings to format I have in NBA_Stats
         stat_dict = {
