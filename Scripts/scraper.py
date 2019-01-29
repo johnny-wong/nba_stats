@@ -32,6 +32,7 @@ def get_best_player_markets(market_date=dt.date.today()):
                     player_market_class.PlayerMarketLadbrokes(date,
                         home_team, away_team, odds_str))
             except:
+                print('Ladbrokes NOT ADDED: {}'.format(odds_str))
                 continue
 
     player_markets_SB = []
@@ -39,10 +40,11 @@ def get_best_player_markets(market_date=dt.date.today()):
         date, home_team, away_team, odds_str_list = game_tuple
         for odds_str in odds_str_list:
             try:
-                playerer_markets_SB.append(
+                player_markets_SB.append(
                     player_market_class.PlayerMarketSportsBet(date,
                         home_team, away_team, odds_str))
             except:
+                print('Sportsbet NOT ADDED: {}'.format(odds_str))
                 continue
 
     best_markets = find_best_markets(player_markets_LB, player_markets_SB)
@@ -54,6 +56,7 @@ def find_best_markets(*args):
     Takes in lists of PlayerMarket class items, combines common markets and 
     returns a list of unique markets with the best odds
     '''
+    print('Finding best markets')
     if len(args) == 0:
         raise ValueError('No lists were given')
 
@@ -70,6 +73,7 @@ def find_best_markets(*args):
 
     for player_market in master_list:
         market_name = player_market.get_market_name()
+
         if market_name in dict_master:
             dict_master[market_name] = dict_master[market_name].combine_odds(player_market)
         else:
