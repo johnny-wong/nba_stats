@@ -13,7 +13,7 @@ def get_links(date, chrome_path, url):
     driver = webdriver.Chrome(chrome_path)
     driver.get(url)
 
-    games = driver.find_elements_by_class_name("link_ft4u1lp")
+    games = driver.find_elements_by_class_name("linkMultiMarket_fcmecz0")
     
     # Filter for date's games that haven't started already
     today_games = [game for game in games if date in game.find_element_by_class_name('time_fbgyqei').text]
