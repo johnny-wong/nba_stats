@@ -1,5 +1,6 @@
 .ipynb_checkpoints
 __pycache__
+historic_markets.pickle
 nba_stats.pickle
 nba_elo.csv
 backup
