@@ -5,12 +5,32 @@ class PlayerMarket():
         overs_exchange, unders_exchange, 
         player, stat, baseline, odds_over, odds_under):
 
+        player_name_dict = {
+            'Al Farouq Aminu':'Al-Farouq Aminu',
+            'Willie Cauley Stein':'Willie Cauley-Stein',
+            'Wendell Carter':'Wendell Carter Jr.',
+            'D.J Augustin':'D.J. Augustin',
+            'Karl Anthony Towns':'Karl-Anthony Towns',
+            'T.J Warren':'T.J. Warren',
+            'Darius MIller':'Darius Miller',
+            'Marvin Bagley': 'Marvin Bagley III',
+            'P.J. Tucker':'PJ Tucker',
+            'J.J. Redick':'JJ Redick',
+            'Otto Porter': 'Otto Porter Jr.',
+            'C.J. McCollum': 'CJ McCollum',
+            'Deandre Bembry': 'Deandre\' Bembry',
+            }
+
+        if player in player_name_dict:
+            self.player = player_name_dict[player]
+        else:
+            self.player = player
+            
         self.time_rec = time_rec
         self.home_team = home_team
         self.away_team = away_team
         self.overs_exchange = overs_exchange
         self.unders_exchange = unders_exchange
-        self.player = player
         self.stat = stat
         self.baseline = baseline
         self.odds_over = odds_over
@@ -95,16 +115,6 @@ class PlayerMarketSportsBet(PlayerMarket):
         'Kemba Walker - Points\nKemba Walker Over (+23.5)\nKemba Walker Under (+23.5)\n1.90\n1.83'
         '''
 
-        # Converts all names to format I have in NBA_Stats
-        player_name_dict = {
-            'Al Farouq Aminu':'Al-Farouq Aminu',
-            'Willie Cauley Stein':'Willie Cauley-Stein',
-            'Wendell Carter':'Wendell Carter Jr.',
-            'D.J Augustin':'D.J. Augustin',
-            'Karl Anthony Towns':'Karl-Anthony Towns',
-            'T.J Warren':'T.J. Warren'
-            }
-
         # Converts all stat headings to format I have in NBA_Stats
         stat_dict = {
             'Points':'PTS',
@@ -115,11 +125,6 @@ class PlayerMarketSportsBet(PlayerMarket):
         re_name = r'(.+) - '
         name = re.match(re_name, odds_str).group(1)
         name = re.sub(r' Jr(\s|$)', ' Jr.', name) # Replace Jr with Jr.
-
-        if name in player_name_dict.keys():
-            player = player_name_dict[name]
-        else:
-            player = name
 
         re_stat = r' - (.+)\n'
         stat = re.search(re_stat, odds_str).group(1)
@@ -139,7 +144,7 @@ class PlayerMarketSportsBet(PlayerMarket):
         
         PlayerMarket.__init__(self, time_rec, home_team, away_team,
                             'sportsbet', 'sportsbet',
-                            player, stat_NBA,
+                            name, stat_NBA,
                             baseline_num, odds_over_num, 
                             odds_under_num)
         
@@ -152,14 +157,7 @@ class PlayerMarketLadbrokes(PlayerMarket):
         String of format:
         'Reggie Jackson Total Assists\nOver (4.5)\n1.87\nUnder (4.5)\n1.87'
         '''
-        # Converts all names to format I have in NBA_Stats
-        player_name_dict = {
-            'P.J. Tucker':'PJ Tucker',
-            'J.J. Redick':'JJ Redick',
-            'Marvin Bagley': 'Marvin Bagley III',
-            'Otto Porter': 'Otto Porter Jr.',
-            'C.J. McCollum': 'CJ McCollum'
-            }
+
         # Converts all stat headings to format I have in NBA_Stats
         stat_dict = {
             'Points':'PTS',
@@ -172,11 +170,6 @@ class PlayerMarketLadbrokes(PlayerMarket):
         name = re.search(re_name, odds_str).group(1)
         
         name = re.sub(r' Jr(\s|$)', ' Jr.', name) # Replace Jr with Jr.
-        if name in player_name_dict.keys():
-            # Replace ladbrokes' name with nba_stats
-            player = player_name_dict[name]
-        else:
-            player = name
 
         # Stat
         re_stat = r' Total (.+)\n'
@@ -200,7 +193,7 @@ class PlayerMarketLadbrokes(PlayerMarket):
         
         PlayerMarket.__init__(self, time_rec, home_team, away_team,
                             'ladbrokes', 'ladbrokes', 
-                            player, stat_NBA,
+                            name, stat_NBA,
                             baseline_num, odds_over_num, 
                             odds_under_num)
         return None
