@@ -96,10 +96,11 @@ class PlayerMarket():
         return market_best_odds 
 
     def __repr__(self):
-        string_repr = ('{} @ {} - {:%d-%b %H:%M}\n'
+        string_repr = ('{} @ {} - {:%d-%b}\n'
+            'Recorded {:%d-%b %H:%M}\n'
             '{}\nOvers {:5} {}\nUnders {:5} {}').format(
-            self.away_team, self.home_team, self.time_rec,
-            self.get_market_name(),
+            self.away_team, self.home_team, self.game_date,
+            self.time_rec, self.get_market_name(),
             self.odds_over, self.overs_exchange,
             self.odds_under, self.unders_exchange
             )
