@@ -3,6 +3,7 @@ from selenium.webdriver.common.keys import Keys
 import time
 import datetime as dt
 import re
+import player_market_class
 
 def get_links(date, chrome_path, url):
     ''' 
@@ -69,18 +70,20 @@ def get_player_markets(link,
     
     return market_list
 
-def get_game_tuples(date=dt.date.today().strftime("%d/%m/%y"),
+def get_game_tuples(game_date=dt.date.today(),
                 chrome_path=r"C:\Users\johnn\chromedriver\chromedriver.exe",
                 url="https://www.sportsbet.com.au/betting/basketball-us/nba-matches"):
     '''
     For supplied date, return a list of tuples each containing:
+    - Game date (Sydney)
     - datetime when it was recorded
     - home team
     - away team
     - list of odds strings
     '''
 
-    links = get_links(date, chrome_path, url)
+    date_str = game_date.strftime("%d/%m/%y")
+    links = get_links(date_str, chrome_path, url)
     print('Got game links from SB\n')
     game_tuples = []
     for i, link in enumerate(links):
@@ -91,7 +94,7 @@ def get_game_tuples(date=dt.date.today().strftime("%d/%m/%y"),
 
         odds_str_list = get_player_markets(link, chrome_path)
         
-        game_tuple = (dt.datetime.now(), home_team, 
+        game_tuple = (game_date, dt.datetime.now(), home_team, 
             away_team, odds_str_list)
 
         game_tuples.append(game_tuple)
@@ -100,3 +103,23 @@ def get_game_tuples(date=dt.date.today().strftime("%d/%m/%y"),
             i+1, len(links)))
 
     return game_tuples
+
+def tuples_to_markets(list_tuples):
+    '''
+    Convert tuples of (datetime, home team, away team, list of odds string)
+    into a list of PlayerMarkets
+    '''
+
+    player_markets_SB = []
+    for game_tuple in list_tuples:
+        game_date, date, home_team, away_team, odds_str_list = game_tuple
+        for odds_str in odds_str_list:
+            try:
+                player_markets_SB.append(
+                    player_market_class.PlayerMarketSportsBet(game_date, date,
+                        home_team, away_team, odds_str))
+            except:
+                print('Sportsbet NOT ADDED: {}'.format(odds_str))
+                continue
+
+    return player_markets_SB

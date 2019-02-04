@@ -14,40 +14,16 @@ def get_best_player_markets(market_date=dt.date.today()):
     '''
 
     print('Started at {}'.format(dt.datetime.now()))
-    # Convert dates to format required by scraper
-    market_date_LB = market_date.strftime("%d/%m/%Y")
-    market_date_SB = market_date.strftime("%d/%m/%y")
 
     # Get all odds strings from exchanges
-    game_tuples_LB = scraper_LB.get_game_tuples(market_date_LB)
+    game_tuples_LB = scraper_LB.get_game_tuples(market_date)
     print('Got all odds strings from LB\n')
-    game_tuples_SB = scraper_SB.get_game_tuples(market_date_SB)
+    game_tuples_SB = scraper_SB.get_game_tuples(market_date)
     print('Got all odds strings from SB\n')
 
     # Convert odds strings to PlayerMarkets
-    player_markets_LB = []
-    for game_tuple in game_tuples_LB:
-        date, home_team, away_team, odds_str_list = game_tuple
-        for odds_str in odds_str_list:
-            try:
-                player_markets_LB.append(
-                    player_market_class.PlayerMarketLadbrokes(date,
-                        home_team, away_team, odds_str))
-            except:
-                print('Ladbrokes NOT ADDED: {}'.format(odds_str))
-                continue
-
-    player_markets_SB = []
-    for game_tuple in game_tuples_SB:
-        date, home_team, away_team, odds_str_list = game_tuple
-        for odds_str in odds_str_list:
-            try:
-                player_markets_SB.append(
-                    player_market_class.PlayerMarketSportsBet(date,
-                        home_team, away_team, odds_str))
-            except:
-                print('Sportsbet NOT ADDED: {}'.format(odds_str))
-                continue
+    player_markets_LB = scraper_LB.tuples_to_markets(game_tuples_LB)
+    player_markets_SB = scraper_SB.tuples_to_markets(game_tuples_SB)
 
     best_markets = find_best_markets(player_markets_LB, player_markets_SB)
     print('Combined odds from all available exchanges to get best odds')

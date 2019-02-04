@@ -1,7 +1,7 @@
 import re
 
 class PlayerMarket():
-    def __init__(self, time_rec, home_team, away_team,
+    def __init__(self, game_date, time_rec, home_team, away_team,
         overs_exchange, unders_exchange, 
         player, stat, baseline, odds_over, odds_under):
 
@@ -25,7 +25,8 @@ class PlayerMarket():
             self.player = player_name_dict[player]
         else:
             self.player = player
-            
+        
+        self.game_date = game_date
         self.time_rec = time_rec
         self.home_team = home_team
         self.away_team = away_team
@@ -108,7 +109,7 @@ class PlayerMarket():
         return self.__repr__()
 
 class PlayerMarketSportsBet(PlayerMarket):
-    def __init__(self, time_rec, home_team, away_team, odds_str):
+    def __init__(self, game_date, time_rec, home_team, away_team, odds_str):
         '''
         Parses the string output scraped from sportsbet website and creates a PlayerMarket instance
         String of format:
@@ -142,7 +143,8 @@ class PlayerMarketSportsBet(PlayerMarket):
         odds_under = re.search(re_odds_under, odds_str).group(1)
         odds_under_num = float(odds_under)
         
-        PlayerMarket.__init__(self, time_rec, home_team, away_team,
+        PlayerMarket.__init__(self, game_date, time_rec, 
+                            home_team, away_team,
                             'sportsbet', 'sportsbet',
                             name, stat_NBA,
                             baseline_num, odds_over_num, 
@@ -151,7 +153,7 @@ class PlayerMarketSportsBet(PlayerMarket):
         return None
 
 class PlayerMarketLadbrokes(PlayerMarket):
-    def __init__(self, time_rec, home_team, away_team, odds_str):
+    def __init__(self, game_date, time_rec, home_team, away_team, odds_str):
         '''
         Parses the string output scraped from sportsbet website and creates a PlayerMarket instance
         String of format:
@@ -191,7 +193,8 @@ class PlayerMarketLadbrokes(PlayerMarket):
         odds_under = re.search(re_odds_under, odds_str).group(1)
         odds_under_num = float(odds_under)
         
-        PlayerMarket.__init__(self, time_rec, home_team, away_team,
+        PlayerMarket.__init__(self, game_date, time_rec, 
+                            home_team, away_team,
                             'ladbrokes', 'ladbrokes', 
                             name, stat_NBA,
                             baseline_num, odds_over_num, 
