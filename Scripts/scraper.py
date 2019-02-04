@@ -12,6 +12,8 @@ def get_best_player_markets(market_date=dt.date.today()):
     - Sportsbet
     Returns a list of PlayerMarket with the best odds from any exchange
     '''
+
+    print('Started at {}'.format(dt.datetime.now()))
     # Convert dates to format required by scraper
     market_date_LB = market_date.strftime("%d/%m/%Y")
     market_date_SB = market_date.strftime("%d/%m/%y")
@@ -49,6 +51,7 @@ def get_best_player_markets(market_date=dt.date.today()):
 
     best_markets = find_best_markets(player_markets_LB, player_markets_SB)
     print('Combined odds from all available exchanges to get best odds')
+    print('Finished at {}'.format(dt.datetime.now()))
     return best_markets
 
 def find_best_markets(*args):
