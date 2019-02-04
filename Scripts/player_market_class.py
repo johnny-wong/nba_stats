@@ -87,7 +87,7 @@ class PlayerMarket():
 
         time_rec = min(self.time_rec, player_market.time_rec)
 
-        market_best_odds = PlayerMarket(time_rec, 
+        market_best_odds = PlayerMarket(self.game_date, time_rec, 
             self.home_team, self.away_team, 
             exchange_overs, exchange_unders,
             self.player, self.stat, self.baseline, 
