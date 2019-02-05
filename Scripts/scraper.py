@@ -16,14 +16,14 @@ def get_best_player_markets(market_date=dt.date.today()):
     print('Started at {}'.format(dt.datetime.now()))
 
     # Get all odds strings from exchanges
-    game_tuples_LB = scraper_LB.get_game_tuples(market_date)
-    print('Got all odds strings from LB\n')
     game_tuples_SB = scraper_SB.get_game_tuples(market_date)
     print('Got all odds strings from SB\n')
-
+    game_tuples_LB = scraper_LB.get_game_tuples(market_date)
+    print('Got all odds strings from LB\n')
+    
     # Convert odds strings to PlayerMarkets
-    player_markets_LB = scraper_LB.tuples_to_markets(game_tuples_LB)
     player_markets_SB = scraper_SB.tuples_to_markets(game_tuples_SB)
+    player_markets_LB = scraper_LB.tuples_to_markets(game_tuples_LB)
 
     best_markets = find_best_markets(player_markets_LB, player_markets_SB)
     print('Combined odds from all available exchanges to get best odds')
