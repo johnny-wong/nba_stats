@@ -19,6 +19,8 @@ class PlayerMarket():
             'Otto Porter': 'Otto Porter Jr.',
             'C.J. McCollum': 'CJ McCollum',
             'Deandre Bembry': 'Deandre\' Bembry',
+            'Larry Nance Jnr': 'Larry Nance Jr.',
+            'Dennis Smith': 'Dennis Smith Jr.'
             }
 
         if player in player_name_dict:
