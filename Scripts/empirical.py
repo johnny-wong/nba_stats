@@ -6,9 +6,10 @@ import numpy as np
 import datetime as dt
 import pandas as pd
 
-parent_dir = os.path.dirname(os.path.dirname(os.getcwd()))
-stats_file = os.path.join(parent_dir, 'Data', 'nba_stats.pickle')
-# print(stats_file)
+parent_dir = os.path.dirname(os.getcwd())
+# stats_file = os.path.join(parent_dir, 'Data', 'nba_stats.pickle')
+stats_file = r'C:\Users\johnn\Desktop\github\nba_stats\Data\nba_stats.pickle'
+print(stats_file)
 nba_stats = pickle.load(open(stats_file, 'rb'))
 
 
